@@ -1,5 +1,5 @@
-const core = require('@actions/core');
-const github = require('@actions/github');
+import * as core from '@actions/core';
+import * as github from '@actions/github';
 
 const main = async () => {
   const octokit = github.getOctokit(core.getInput('token'));
@@ -11,8 +11,8 @@ const main = async () => {
   const reviewers = core.getInput('reviewers').split(',');
 
   const githubInfo = process.env.GITHUB_REPOSITORY?.split('/');
-  const owner = githubInfo?.[0]
-  const repo = githubInfo?.[1]
+  const owner = githubInfo?.[0] || ''
+  const repo = githubInfo?.[1] || ''
   try {
     const {
       data: { number: issueNumber },
@@ -36,8 +36,8 @@ const main = async () => {
       pull_number: issueNumber,
       reviewers,
     });
-  } catch (error: any) {
-    core.setFailed(error.message);
+  } catch (error) {
+    if (error instanceof Error) core.setFailed(error.message);
   }
 };
 
