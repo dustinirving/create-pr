@@ -7,7 +7,8 @@ jobs:
   open-pull-request:
     runs-on: ubuntu-latest
     steps:
-      - run: npm ci
+      - uses: actions/checkout@v3
+      - run: npm install
       - name: Pull Request
         uses: dustinirving/create-pr@v1.0.1
         with:
