@@ -1,0 +1,18 @@
+name: Release
+on:
+  push:
+    branches: [release/1.0.0]
+
+jobs:
+  open-pull-request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull Request
+        uses: ./
+        with:
+          title: 'Open PR'
+          body: '<h3>Summary</h3><p>Body...</p>'
+          head: 'release/1.0.0'
+          base: 'main'
+          labels: 'Github Actions'
+          reviewers: 'dustinirving'

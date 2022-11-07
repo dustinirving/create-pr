@@ -1,11 +1,30 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: Create Pull Request - dustinirving
+description: This opens a pull request
 inputs:
-  milliseconds: # change this
+  token:
+    description: Personal access token. Defaults to GITHUB_TOKEN.
+    default: ${{ github.token }}
+    required: false
+  title:
+    description: Title of the pull request
+    default: Title
+    required: false
+  body:
+    description: Body of the pull request
+    default: Body
+    required: false
+  head:
+    description: Target Branch
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+  base:
+    description: Base Branch
+    required: true
+  labels:
+    description: Labels to add to the pull request
+    required: false
+  reviewers:
+    description: Reviewers
+    required: false
 runs:
   using: 'node16'
-  main: 'dist/index.js'
+  main: 'index.js'

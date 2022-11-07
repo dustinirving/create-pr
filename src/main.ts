@@ -1,19 +1,44 @@
-import * as core from '@actions/core'
-import {wait} from './wait'
+const core = require('@actions/core');
+const github = require('@actions/github');
 
-async function run(): Promise<void> {
+const main = async () => {
+  const octokit = github.getOctokit(core.getInput('token'));
+  const title = core.getInput('title');
+  const body = core.getInput('body');
+  const head = core.getInput('head');
+  const base = core.getInput('base');
+  const labels = core.getInput('labels').split(',');
+  const reviewers = core.getInput('reviewers').split(',');
+
+  const githubInfo = process.env.GITHUB_REPOSITORY?.split('/');
+  const owner = githubInfo?.[0]
+  const repo = githubInfo?.[1]
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
-
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
-
-    core.setOutput('time', new Date().toTimeString())
-  } catch (error) {
-    if (error instanceof Error) core.setFailed(error.message)
+    const {
+      data: { number: issueNumber },
+    } = await octokit.request('POST /repos/{owner}/{repo}/pulls', {
+      owner,
+      repo,
+      title,
+      body,
+      head,
+      base,
+    });
+    await octokit.request('POST /repos/{owner}/{repo}/issues/{issue_number}/labels', {
+      owner,
+      repo,
+      issue_number: issueNumber,
+      labels,
+    });
+    await octokit.request('POST /repos/{owner}/{repo}/pulls/{pull_number}/requested_reviewers', {
+      owner,
+      repo,
+      pull_number: issueNumber,
+      reviewers,
+    });
+  } catch (error: any) {
+    core.setFailed(error.message);
   }
-}
+};
 
-run()
+main();
