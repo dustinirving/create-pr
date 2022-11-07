@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Pull Request
-        uses: ./
+        uses: dustinirving/create-pr@v1.0.0
         with:
           title: 'Open PR'
           body: '<h3>Summary</h3><p>Body...</p>'
